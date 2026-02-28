@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arizona Prime — Портал</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070709;--surface:#0a0a0f;--border:#13131b;--border2:#1a1a24;
+  --accent1:#e8365d;--accent2:#4a9eff;--accent3:#c77dff;--inactive:#3dd9eb;
+  --gradient:linear-gradient(135deg,#ff4d6d,#c77dff,#4a9eff);
+  --text:#f0f0f4;--sub:#3a3a50;--card:#0d0d14;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
+.sb-logo{padding:24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.sb-logo-icon{width:36px;height:36px;background:var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-logo-icon svg{width:18px;height:18px;}
+.sb-logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;}
+.sb-logo-sub{font-size:10px;color:#2a2a36;letter-spacing:.07em;text-transform:uppercase;}
+
+.sb-user{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.sb-avatar{width:38px;height:38px;border-radius:50%;background:var(--border);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#2a2a36;position:relative;}
+.sb-avatar img{width:100%;height:100%;object-fit:cover;}
+.sb-uname{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-level{font-size:10px;color:#2e2e40;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.sb-nav{flex:1;padding:12px 12px;overflow-y:auto;}
+.sb-nav-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1e1e2c;padding:8px 8px 4px;margin-top:4px;}
+.sb-btn{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;cursor:pointer;transition:background .2s,color .2s;color:#333;font-size:13px;font-weight:500;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;}
+.sb-btn svg{width:16px;height:16px;flex-shrink:0;}
+.sb-btn:hover{background:var(--border);color:#666;}
+.sb-btn.active{background:rgba(232,54,93,.1);color:var(--accent1);}
+.sb-btn .badge{margin-left:auto;background:var(--accent1);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;}
+
+.sb-bottom{padding:12px;border-top:1px solid var(--border);}
+.sb-logout{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;color:#222;font-size:13px;transition:all .2s;border:none;background:none;width:100%;}
+.sb-logout:hover{background:rgba(232,54,93,.08);color:var(--accent1);}
+
+/* ── MAIN ── */
+.main{margin-left:240px;min-height:100vh;padding:32px 36px;max-width:1200px;}
+.page{display:none;animation:pagein .3s ease both;}
+.page.active{display:block;}
+@keyframes pagein{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── PAGE HEADER ── */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px;}
+.ph-left h2{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.02em;}
+.ph-left p{color:#2e2e40;font-size:13px;margin-top:4px;}
+.ph-badge{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:100px;border:1px solid var(--border);}
+
+/* ── FILTERS BAR ── */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;align-items:center;}
+.filter-pill{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:100px;font-size:12px;font-weight:500;color:#333;cursor:pointer;transition:all .2s;}
+.filter-pill.active{background:rgba(232,54,93,.1);border-color:rgba(232,54,93,.25);color:var(--accent1);}
+.filter-pill:hover{border-color:var(--border2);color:#666;}
+.search-box{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:100px;flex:1;min-width:200px;max-width:320px;}
+.search-box svg{width:14px;height:14px;color:#2a2a36;flex-shrink:0;}
+.search-box input{background:none;border:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;flex:1;}
+.search-box input::placeholder{color:#1e1e28;}
+
+/* ── ADMIN GRID ── */
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.admin-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;position:relative;overflow:hidden;transition:border-color .25s,transform .25s;cursor:pointer;}
+.admin-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.admin-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.lv1::before,.lv2::before,.lv3::before{background:linear-gradient(90deg,#444,#333);}
+.lv4::before{background:linear-gradient(90deg,#4a9eff,#2176e0);}
+.lv5::before{background:linear-gradient(90deg,#c77dff,#a055e8);}
+.lv6::before{background:linear-gradient(90deg,#ff9f43,#ee5a24);}
+.lv7::before{background:linear-gradient(90deg,#e8365d,#c01040);}
+.lv8::before{background:linear-gradient(90deg,#ffd700,#ffb300);}
+.lv9::before{background:var(--gradient);}
+
+.ac-top{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.ac-avatar{width:46px;height:46px;border-radius:50%;background:var(--border);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#2a2a36;}
+.ac-avatar img{width:100%;height:100%;object-fit:cover;}
+.ac-info{flex:1;min-width:0;}
+.ac-nick{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;line-height:1.2;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.ac-nick.inactive-nick{color:var(--inactive);}
+.inactive-icon{display:inline-flex;align-items:center;flex-shrink:0;}
+.inactive-icon svg{width:14px;height:14px;color:var(--inactive);}
+.ac-pos{font-size:12px;color:#2e2e40;margin-top:2px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.ac-stats{display:flex;gap:8px;flex-wrap:wrap;}
+.ac-stat{display:flex;align-items:center;gap:5px;font-size:11px;color:#2a2a36;}
+.ac-stat svg{width:12px;height:12px;}
+
+.level-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:100px;text-transform:uppercase;}
+.lvp1,.lvp2,.lvp3{background:rgba(100,100,120,.12);color:#44445a;}
+.lvp4{background:rgba(74,158,255,.12);color:#4a9eff;}
+.lvp5{background:rgba(199,125,255,.12);color:#c77dff;}
+.lvp6{background:rgba(255,159,67,.12);color:#ff9f43;}
+.lvp7{background:rgba(232,54,93,.12);color:#e8365d;}
+.lvp8{background:rgba(255,215,0,.12);color:#ffd700;}
+.lvp9{background:rgba(255,77,109,.15);color:#ff4d6d;}
+
+.warn-badge{background:rgba(255,165,0,.1);color:#ffa500;font-size:10px;font-weight:600;padding:2px 8px;border-radius:100px;}
+.rep-badge{background:rgba(232,54,93,.1);color:var(--accent1);font-size:10px;font-weight:600;padding:2px 8px;border-radius:100px;}
+
+/* ── PROFILE PANEL ── */
+.profile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:200;align-items:flex-start;justify-content:flex-end;padding:20px;}
+.profile-overlay.open{display:flex;animation:pagein .25s ease;}
+.profile-panel{background:var(--surface);border:1px solid var(--border);border-radius:24px;width:100%;max-width:480px;max-height:calc(100vh - 40px);overflow-y:auto;position:relative;}
+.pp-close{position:sticky;top:16px;right:16px;float:right;margin:16px 16px 0 0;background:var(--border);border:none;color:#555;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:1;transition:all .2s;}
+.pp-close:hover{background:#1e1e28;color:var(--text);}
+.pp-hero{padding:32px 28px 20px;text-align:center;border-bottom:1px solid var(--border);}
+.pp-av-wrap{position:relative;display:inline-block;margin-bottom:16px;}
+.pp-avatar{width:80px;height:80px;border-radius:50%;background:var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:#2a2a36;margin:0 auto;}
+.pp-avatar img{width:100%;height:100%;object-fit:cover;}
+.pp-av-ring{position:absolute;inset:-3px;border-radius:50%;z-index:-1;}
+.pp-nick{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:4px;}
+.pp-nick.inactive-nick{color:var(--inactive);}
+.pp-pos{font-size:13px;color:#444;margin-bottom:12px;}
+.pp-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+
+.pp-body{padding:24px 28px;}
+.pp-section{margin-bottom:24px;}
+.pp-section-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent1);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.pp-section-title::before{content:'';display:block;width:2px;height:12px;background:var(--accent1);border-radius:2px;}
+.pp-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.pp-row:last-child{border-bottom:none;}
+.pp-key{font-size:12px;color:#333;display:flex;align-items:center;gap:7px;}
+.pp-key svg{width:13px;height:13px;}
+.pp-val{font-size:13px;font-weight:500;}
+.pp-val.accent{color:var(--accent2);}
+
+.pp-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pp-stat-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.pp-stat-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:2px;}
+.pp-stat-num.warns{color:#ffa500;}
+.pp-stat-num.reps{color:var(--accent1);}
+.pp-stat-label{font-size:11px;color:#2a2a36;}
+
+.pp-history{max-height:200px;overflow-y:auto;}
+.ph-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.ph-item:last-child{border-bottom:none;}
+.ph-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.ph-dot.warn{background:#ffa500;}
+.ph-dot.rep{background:var(--accent1);}
+.ph-text{flex:1;}
+.ph-type{font-size:12px;font-weight:600;}
+.ph-reason{font-size:11px;color:#333;margin-top:2px;}
+.ph-date{font-size:10px;color:#222;margin-top:1px;}
+
+.pp-socials{display:flex;gap:10px;}
+.pp-social{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--border);border:1px solid var(--border2);color:#333;text-decoration:none;transition:all .2s;flex-shrink:0;}
+.pp-social svg{width:18px;height:18px;fill:currentColor;}
+.pp-social:hover{border-color:var(--border2);color:#666;}
+.pp-social.vk:hover{color:#4a76a8;}
+.pp-social.ds:hover{color:#5865F2;}
+
+/* ── MY PROFILE ── */
+.my-profile-grid{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start;}
+.mp-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;position:sticky;top:32px;}
+.mp-av-wrap{position:relative;width:90px;height:90px;margin:0 auto 16px;}
+.mp-avatar{width:90px;height:90px;border-radius:50%;background:var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:30px;color:#2a2a36;}
+.mp-avatar img{width:100%;height:100%;object-fit:cover;}
+.mp-av-btn{position:absolute;bottom:0;right:0;width:28px;height:28px;background:var(--accent1);border:2px solid var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;}
+.mp-av-btn:hover{transform:scale(1.1);}
+.mp-av-btn svg{width:13px;height:13px;stroke:#fff;}
+.mp-nick-edit{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;text-align:center;margin-bottom:4px;}
+.mp-pos-edit{font-size:13px;color:#333;text-align:center;margin-bottom:14px;}
+.mp-level-center{display:flex;justify-content:center;margin-bottom:16px;}
+.mp-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.mp-stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;}
+.mp-stat-n{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;}
+.mp-stat-n.w{color:#ffa500;}.mp-stat-n.r{color:var(--accent1);}
+.mp-stat-l{font-size:10px;color:#2a2a36;}
+.mp-dates{font-size:11px;color:#2a2a36;text-align:center;line-height:1.8;}
+
+.mp-form{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;}
+.mp-section{margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid var(--border);}
+.mp-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.mp-section-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+.mp-section-title::before{content:'';display:block;width:2px;height:12px;background:var(--accent2);border-radius:2px;}
+.form-group{margin-bottom:14px;}
+label.fl{display:block;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#2e2e40;margin-bottom:6px;}
+.fc{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:11px 13px;outline:none;transition:border-color .2s;}
+.fc:focus{border-color:#1e1e2c;}
+.fc::placeholder{color:#1a1a24;}
+.fc-icon-wrap{position:relative;}
+.fc-icon-wrap svg.fci{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#222;pointer-events:none;}
+.fc-icon-wrap .fc{padding-left:36px;}
+.btn-save{display:inline-flex;align-items:center;gap:8px;background:var(--gradient);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .2s;}
+.btn-save:hover{opacity:.88;transform:translateY(-1px);}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:var(--border);color:#666;border:none;padding:12px 24px;border-radius:10px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-secondary:hover{background:var(--border2);color:#999;}
+
+/* ── INACTIVES ── */
+.inactive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.inactive-card{background:var(--card);border:1px solid rgba(61,217,235,.12);border-radius:18px;padding:20px;position:relative;}
+.inactive-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--inactive),rgba(61,217,235,.3));}
+.ic-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.ic-nick{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--inactive);}
+.ic-pos{font-size:11px;color:#2e2e40;margin-top:2px;}
+.ic-info-row{display:flex;align-items:center;gap:6px;font-size:12px;color:#333;margin-bottom:6px;}
+.ic-info-row svg{width:13px;height:13px;}
+.ic-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;margin-top:8px;}
+.ic-status.pending{background:rgba(255,165,0,.1);color:#ffa500;}
+.ic-status.approved{background:rgba(61,217,235,.1);color:var(--inactive);}
+.ic-actions{display:flex;gap:8px;margin-top:14px;}
+
+/* INACTIVE REQUEST FORM */
+.inact-req-form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.inact-req-form h4{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#0f0f18;border:1px solid var(--border);border-radius:100px;padding:11px 22px;font-size:13px;font-weight:500;color:var(--text);z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:rgba(34,197,94,.25);color:#22c55e;}
+.toast.err{border-color:rgba(232,54,93,.25);color:var(--accent1);}
+
+/* ── MODAL ── */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);z-index:300;align-items:center;justify-content:center;padding:20px;}
+.modal-ov.open{display:flex;animation:pagein .2s ease;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;width:100%;max-width:460px;position:relative;max-height:90vh;overflow-y:auto;}
+.modal h4{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;}
+.modal .msub{color:#333;font-size:13px;margin-bottom:24px;}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--border);border:none;color:#444;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.modal-close:hover{background:var(--border2);color:var(--text);}
+
+/* MISC */
+.loader{display:inline-block;width:16px;height:16px;border:2px solid #1a1a24;border-top-color:var(--accent2);border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty{text-align:center;padding:60px 20px;color:#1e1e2c;}
+.empty svg{width:40px;height:40px;margin:0 auto 14px;display:block;}
+.action-btn{background:var(--border);border:none;color:#444;font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 12px;border-radius:8px;cursor:pointer;transition:all .2s;}
+.action-btn:hover{background:var(--border2);color:#888;}
+.action-btn.danger:hover{background:rgba(232,54,93,.12);color:var(--accent1);}
+.action-btn.ok:hover{background:rgba(34,197,94,.1);color:#22c55e;}
+.divider-row{display:flex;align-items:center;gap:12px;color:#1a1a24;font-size:11px;margin:20px 0;}
+.divider-row::before,.divider-row::after{content:'';flex:1;height:1px;background:var(--border);}
+input[type="file"]{display:none;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#1a1a24;border-radius:4px;}
+@media(max-width:768px){.sidebar{width:60px;}.sb-logo-text,.sb-logo-sub,.sb-uname,.sb-level,.sb-btn span,.sb-nav-label{display:none;}.sb-btn{justify-content:center;padding:12px;}.sb-user{justify-content:center;}.main{margin-left:60px;padding:20px 16px;}.my-profile-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="url(#sbg)" stroke-width="1.8">
+        <defs><linearGradient id="sbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff4d6d"/><stop offset="100%" stop-color="#4a9eff"/></linearGradient></defs>
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    </div>
+    <div>
+      <div class="sb-logo-text">Arizona Prime</div>
+      <div class="sb-logo-sub">Staff Portal</div>
+    </div>
+  </div>
+
+  <div class="sb-user">
+    <div class="sb-avatar" id="sbAvatar"><span id="sbAvatarLetter">?</span></div>
+    <div style="min-width:0">
+      <div class="sb-uname" id="sbNick">—</div>
+      <div class="sb-level" id="sbLevel">—</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-nav-label">Основное</div>
+    <button class="sb-btn active" onclick="showTab('staff')" data-tab="staff">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Список сотрудников</span>
+    </button>
+    <button class="sb-btn" onclick="showTab('inactive')" data-tab="inactive" id="inactiveNavBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <span>Неактивы</span>
+      <span class="badge" id="inactiveBadge" style="display:none">0</span>
+    </button>
+    <div class="sb-nav-label">Профиль</div>
+    <button class="sb-btn" onclick="showTab('myprofile')" data-tab="myprofile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Мой профиль</span>
+    </button>
+    <div class="sb-nav-label" id="adminNavLabel" style="display:none">Управление</div>
+    <button class="sb-btn" onclick="showTab('admin')" data-tab="admin" id="adminNavBtn" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Администрирование</span>
+    </button>
+  </nav>
+
+  <div class="sb-bottom">
+    <button class="sb-logout" onclick="doLogout()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>Выйти</span>
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ═══ STAFF LIST ═══ -->
+  <div class="page active" id="page-staff">
+    <div class="ph">
+      <div class="ph-left">
+        <h2>Список сотрудников</h2>
+        <p id="staffCount">Загрузка...</p>
+      </div>
+    </div>
+    <div class="filters">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Поиск по нику, должности..." oninput="renderStaff()">
+      </div>
+      <div class="filter-pill active" onclick="setLevelFilter('all',this)" id="flAll">Все</div>
+      <div class="filter-pill" onclick="setLevelFilter('1',this)">Академик</div>
+      <div class="filter-pill" onclick="setLevelFilter('2',this)">Рыцарь</div>
+      <div class="filter-pill" onclick="setLevelFilter('3',this)">Администратор</div>
+      <div class="filter-pill" onclick="setLevelFilter('4',this)">4 lvl+</div>
+      <div class="filter-pill" onclick="setLevelFilter('inactive',this)" style="color:var(--inactive);border-color:rgba(61,217,235,.2)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Неактивы
+      </div>
+    </div>
+    <div class="admin-grid" id="staffGrid"><div class="empty"><span class="loader"></span></div></div>
+  </div>
+
+  <!-- ═══ INACTIVES ═══ -->
+  <div class="page" id="page-inactive">
+    <div class="ph">
+      <div class="ph-left">
+        <h2>Неактивы</h2>
+        <p>Сотрудники в отпуске или временно неактивны</p>
+      </div>
+      <button class="btn-save" onclick="openInactiveReq()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Подать заявку
+      </button>
+    </div>
+    <div id="inactiveGrid"><div class="empty"><span class="loader"></span></div></div>
+  </div>
+
+  <!-- ═══ MY PROFILE ═══ -->
+  <div class="page" id="page-myprofile">
+    <div class="ph">
+      <div class="ph-left">
+        <h2>Мой профиль</h2>
+        <p>Редактируй свои данные</p>
+      </div>
+    </div>
+    <div class="my-profile-grid">
+      <div class="mp-card">
+        <div class="mp-av-wrap">
+          <div class="mp-avatar" id="mpAvatar"><span id="mpAvatarLetter">?</span></div>
+          <div class="mp-av-btn" onclick="document.getElementById('avatarFile').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+        </div>
+        <input type="file" id="avatarFile" accept="image/*" onchange="uploadAvatar(event)">
+        <div class="mp-nick-edit" id="mpNick">—</div>
+        <div class="mp-pos-edit" id="mpPos">—</div>
+        <div class="mp-level-center" id="mpLevelPill"></div>
+        <div class="mp-stat-row">
+          <div class="mp-stat"><div class="mp-stat-n w" id="mpWarns">0</div><div class="mp-stat-l">Предупреждения</div></div>
+          <div class="mp-stat"><div class="mp-stat-n r" id="mpReps">0</div><div class="mp-stat-l">Выговоры</div></div>
+        </div>
+        <div class="mp-dates" id="mpDates"></div>
+      </div>
+      <div class="mp-form">
+        <div class="mp-section">
+          <div class="mp-section-title">Соцсети</div>
+          <div class="form-group">
+            <label class="fl">Discord</label>
+            <div class="fc-icon-wrap">
+              <svg class="fci" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+              <input class="fc" id="mpDiscord" placeholder="username#0000">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="fl">ВКонтакте (ссылка)</label>
+            <div class="fc-icon-wrap">
+              <svg class="fci" viewBox="0 0 24 24" fill="currentColor"><path d="M21.547 7h-3.29a.743.743 0 0 0-.655.392s-1.312 2.416-1.734 3.23C14.734 12.813 14 12.126 14 11.11V7.603A1.104 1.104 0 0 0 12.896 6.5h-2.474a1.982 1.982 0 0 0-1.75.813s1.255-.204 1.255 1.49c0 .42.022 1.626.04 2.64a.73.73 0 0 1-1.272.503 21.54 21.54 0 0 1-2.498-4.543.693.693 0 0 0-.63-.403h-2.99a.508.508 0 0 0-.48.685C3.005 10.175 6.918 18 11.38 18h1.878a.742.742 0 0 0 .742-.742v-1.135a.73.73 0 0 1 1.23-.53l2.247 2.112a1.09 1.09 0 0 0 .816.355h2.309a1.09 1.09 0 0 0 .972-1.587l-1.956-3.415a.73.73 0 0 1 .098-.846l3.83-4.48A.744.744 0 0 0 21.547 7z"/></svg>
+              <input class="fc" id="mpVK" placeholder="https://vk.com/id...">
+            </div>
+          </div>
+          <button class="btn-save" onclick="saveSocials()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Сохранить соцсети
+          </button>
+        </div>
+
+        <div class="mp-section">
+          <div class="mp-section-title">Сменить пароль</div>
+          <div class="form-group">
+            <label class="fl">Текущий пароль</label>
+            <input class="fc" id="mpOldPass" type="password" placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label class="fl">Новый пароль</label>
+            <input class="fc" id="mpNewPass" type="password" placeholder="Минимум 6 символов">
+          </div>
+          <div class="form-group">
+            <label class="fl">Подтверждение</label>
+            <input class="fc" id="mpConfPass" type="password" placeholder="Повтори пароль">
+          </div>
+          <button class="btn-save" onclick="changePassword()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Сменить пароль
+          </button>
+        </div>
+
+        <div class="mp-section" id="myPunishSection">
+          <div class="mp-section-title">История наказаний</div>
+          <div id="myPunishList"><div class="empty" style="padding:20px"><span class="loader"></span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ADMIN ═══ -->
+  <div class="page" id="page-admin">
+    <div class="ph">
+      <div class="ph-left">
+        <h2>Администрирование</h2>
+        <p>Управление сотрудниками</p>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px" id="adminManageGrid">
+      <div class="empty"><span class="loader"></span></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══ PROFILE PANEL (OVERLAY) ═══ -->
+<div class="profile-overlay" id="profileOverlay" onclick="closeProfile(event)">
+  <div class="profile-panel" id="profilePanel">
+    <button class="pp-close" onclick="document.getElementById('profileOverlay').classList.remove('open')">✕</button>
+    <div id="profileContent"></div>
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+<!-- Inactive request -->
+<div class="modal-ov" id="inactiveModal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('inactiveModal').classList.remove('open')">✕</button>
+    <h4>Заявка на неактив</h4>
+    <p class="msub">Укажи причину и сроки — куратор рассмотрит твою заявку</p>
+    <div class="form-group"><label class="fl">Причина <span style="color:var(--accent1)">*</span></label><textarea class="fc" id="inactReason" style="resize:vertical;min-height:80px" placeholder="Опиши причину неактивности..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="fl">Дата начала <span style="color:var(--accent1)">*</span></label><input class="fc" id="inactStart" type="date"></div>
+      <div class="form-group"><label class="fl">Дата конца <span style="color:var(--accent1)">*</span></label><input class="fc" id="inactEnd" type="date"></div>
+    </div>
+    <button class="btn-save" style="width:100%;justify-content:center;margin-top:8px" onclick="submitInactiveReq()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Отправить заявку
+    </button>
+  </div>
+</div>
+
+<!-- Issue punishment modal -->
+<div class="modal-ov" id="punishModal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('punishModal').classList.remove('open')">✕</button>
+    <h4 id="punishTitle">Выдать наказание</h4>
+    <p class="msub" id="punishSub">Укажи тип и причину наказания</p>
+    <div class="form-group">
+      <label class="fl">Тип наказания</label>
+      <select class="fc" id="punishType" style="cursor:pointer">
+        <option value="warning">Предупреждение</option>
+        <option value="reprimand">Выговор</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="fl">Причина <span style="color:var(--accent1)">*</span></label><textarea class="fc" id="punishReason" style="resize:vertical;min-height:80px" placeholder="Укажи причину..."></textarea></div>
+    <button class="btn-save" style="width:100%;justify-content:center;margin-top:8px" onclick="issuePunishment()">Выдать</button>
+  </div>
+</div>
+
+<!-- Edit user modal (admin) -->
+<div class="modal-ov" id="editUserModal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('editUserModal').classList.remove('open')">✕</button>
+    <h4>Редактировать сотрудника</h4>
+    <p class="msub" id="editUserSub"></p>
+    <input type="hidden" id="editUserId">
+    <div class="form-group"><label class="fl">Никнейм</label><input class="fc" id="euNick" type="text"></div>
+    <div class="form-group"><label class="fl">Реальное имя</label><input class="fc" id="euName" type="text"></div>
+    <div class="form-group"><label class="fl">Должность</label><input class="fc" id="euPos" type="text"></div>
+    <div class="form-group"><label class="fl" id="euLevelLabel">Уровень</label>
+      <select class="fc" id="euLevel" style="cursor:pointer">
+        <option value="1">1 — Академик</option><option value="2">2 — Рыцарь</option>
+        <option value="3">3 — Администратор</option><option value="4">4 — Следящий за академией</option>
+        <option value="5">5 — Куратор отдела</option><option value="6">6 — Руководитель отдела</option>
+        <option value="7">7 — Заместитель Директора</option><option value="8">8 — Директор</option>
+        <option value="9" id="euLv9opt">9 — Разработчик</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="fl">Дата постановления</label><input class="fc" id="euAppoint" type="date"></div>
+      <div class="form-group"><label class="fl">Дата повышения</label><input class="fc" id="euPromo" type="date"></div>
+    </div>
+    <div class="form-group"><label class="fl">Discord</label><input class="fc" id="euDiscord" type="text"></div>
+    <div class="form-group"><label class="fl">ВКонтакте</label><input class="fc" id="euVk" type="text"></div>
+    <div class="form-group"><label class="fl">Статус</label>
+      <select class="fc" id="euInactive" style="cursor:pointer">
+        <option value="false">Активен</option>
+        <option value="true">Неактив</option>
+      </select>
+    </div>
+    <button class="btn-save" style="width:100%;justify-content:center;margin-top:4px" onclick="saveEditUser()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Сохранить
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+const SB_URL = 'https://mnzayheqmplwgcpgapwn.supabase.co';
+const SB_KEY = 'sb_publishable_taiYP-OlMMOXB4NYIpgKOQ_7JLaUPpU';
+const SESSION_KEY = 'ap2_session';
+
+// ══════════════════════════════════════════════
+// SUPABASE HELPER
+// ══════════════════════════════════════════════
+async function sb(path, method='GET', body=null) {
+  const opts = { method, headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(SB_URL+'/rest/v1/'+path, opts);
+  if (!r.ok) throw new Error(await r.text());
+  const t = await r.text(); return t ? JSON.parse(t) : [];
+}
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let ME = null;   // current user object
+let allUsers = [];
+let allPunishments = [];
+let inactiveRequests = [];
+let levelFilter = 'all';
+let punishTargetId = null;
+
+const LEVEL_NAMES = {1:'Академик',2:'Рыцарь',3:'Администратор',4:'Следящий за академией',5:'Куратор отдела',6:'Руководитель отдела',7:'Заместитель Директора',8:'Директор',9:'Разработчик'};
+const LEVEL_CLS   = {1:'lvp1',2:'lvp2',3:'lvp3',4:'lvp4',5:'lvp5',6:'lvp6',7:'lvp7',8:'lvp8',9:'lvp9'};
+const CARD_CLS    = {1:'lv1',2:'lv2',3:'lv3',4:'lv4',5:'lv5',6:'lv6',7:'lv7',8:'lv8',9:'lv9'};
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast show ' + type;
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════
+// AUTH / SESSION
+// ══════════════════════════════════════════════
+function loadSession() {
+  const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+  if (!raw) { window.location.href = 'index.html'; return null; }
+  try {
+    const s = JSON.parse(raw);
+    if (s.expires && Date.now() > s.expires) { clearSession(); window.location.href = 'index.html'; return null; }
+    return s.user;
+  } catch { window.location.href = 'index.html'; return null; }
+}
+
+function clearSession() { localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY); }
+
+function doLogout() { clearSession(); window.location.href = 'index.html'; }
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const d = Math.floor(diff/86400000);
+  if (d < 1) return 'сегодня';
+  if (d === 1) return '1 день';
+  if (d < 7) return d + ' дн';
+  if (d < 30) return Math.floor(d/7) + ' нед';
+  if (d < 365) return Math.floor(d/30) + ' мес';
+  return Math.floor(d/365) + ' лет';
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+function avatarLetter(nick) { return (nick||'?').charAt(0).toUpperCase(); }
+
+function levelPill(level) {
+  return `<span class="level-pill ${LEVEL_CLS[level]||'lvp1'}">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    ${level} · ${LEVEL_NAMES[level]||'—'}
+  </span>`;
+}
+
+// Can ME manage user u?
+function canManage(u) {
+  if (!ME || ME.id === '__dev__') return true;
+  if (ME.level <= 3) return false;
+  if (ME.level === 4) return u.level <= 3;
+  if (ME.level === 5 || ME.level === 6) return u.level <= 4;
+  return true; // 7,8 no limit
+}
+
+// ══════════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════════
+function showTab(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  document.querySelector('[data-tab="'+tab+'"]').classList.add('active');
+  if (tab === 'inactive') loadInactives();
+  if (tab === 'myprofile') renderMyProfile();
+  if (tab === 'admin') renderAdminManage();
+}
+
+// ══════════════════════════════════════════════
+// LOAD DATA
+// ══════════════════════════════════════════════
+async function loadAll() {
+  try {
+    allUsers = await sb('users?order=level.desc,nickname.asc&select=*');
+    allPunishments = await sb('punishments?order=created_at.desc&select=*');
+    inactiveRequests = await sb('inactive_requests?order=created_at.desc&select=*');
+    renderStaff();
+    renderMyProfile();
+    updateInactiveBadge();
+  } catch(e) { toast('Ошибка загрузки: ' + e.message, 'err'); }
+}
+
+// ══════════════════════════════════════════════
+// STAFF LIST
+// ══════════════════════════════════════════════
+function setLevelFilter(v, el) {
+  levelFilter = v;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderStaff();
+}
+
+function renderStaff() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let users = [...allUsers];
+
+  // Add dev user if ME is dev
+  if (ME && ME.id === '__dev__' && !users.find(u => u.nickname === 'falcone')) {
+    users.unshift({ id: '__dev__', nickname: 'falcone', real_name: 'Developer', position: 'Разработчик', level: 9, is_inactive: false, warnings: 0, reprimands: 0 });
+  }
+
+  if (levelFilter === 'inactive') { users = users.filter(u => u.is_inactive); }
+  else if (levelFilter === '4') { users = users.filter(u => u.level >= 4); }
+  else if (levelFilter !== 'all') { users = users.filter(u => u.level == levelFilter); }
+
+  if (q) users = users.filter(u => (u.nickname||'').toLowerCase().includes(q) || (u.position||'').toLowerCase().includes(q) || (u.real_name||'').toLowerCase().includes(q));
+
+  document.getElementById('staffCount').textContent = users.length + ' сотрудников';
+
+  const grid = document.getElementById('staffGrid');
+  if (!users.length) { grid.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Никого не найдено</div>'; return; }
+
+  grid.innerHTML = users.map(u => {
+    const av = u.avatar
+      ? `<img src="${u.avatar}" alt="${u.nickname}">`
+      : `<span>${avatarLetter(u.nickname)}</span>`;
+    const inactHtml = u.is_inactive
+      ? `<span class="inactive-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="4" ry="8"/><line x1="12" y1="4" x2="12" y2="4"/><path d="M8 8h8M8 16h8"/><path d="M4 12h16"/></svg></span>` : '';
+    const nickCls = u.is_inactive ? 'inactive-nick' : '';
+    const warns = u.warnings || 0;
+    const reps  = u.reprimands || 0;
+    return `<div class="admin-card ${CARD_CLS[u.level]||'lv1'}" onclick="openProfile('${u.id}')">
+      <div class="ac-top">
+        <div class="ac-avatar">${av}</div>
+        <div class="ac-info">
+          <div class="ac-nick ${nickCls}">${u.nickname||'—'}${inactHtml}</div>
+          <div class="ac-pos">${u.position||'—'}</div>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">${levelPill(u.level)}</div>
+      <div class="ac-stats">
+        ${warns > 0 ? `<span class="warn-badge">⚠ ${warns} предупр.</span>` : ''}
+        ${reps > 0 ? `<span class="rep-badge">✕ ${reps} выговор.</span>` : ''}
+        ${warns === 0 && reps === 0 ? `<span class="ac-stat" style="color:#1a1a28"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Нет нарушений</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// PROFILE PANEL
+// ══════════════════════════════════════════════
+function openProfile(id) {
+  const u = allUsers.find(x => x.id == id) || (ME && ME.id === '__dev__' && id === '__dev__' ? ME : null);
+  if (!u) return;
+  const punishments = allPunishments.filter(p => p.user_id == id);
+  const av = u.avatar ? `<img src="${u.avatar}" alt="${u.nickname}">` : `<span>${avatarLetter(u.nickname)}</span>`;
+  const nickCls = u.is_inactive ? 'inactive-nick' : '';
+  const inactHtml = u.is_inactive ? `<span class="inactive-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="4" ry="8"/><path d="M8 8h8M8 16h8"/><path d="M4 12h16"/></svg></span>` : '';
+
+  // gradient ring by level
+  const rings = {1:'linear-gradient(135deg,#444,#333)',2:'linear-gradient(135deg,#555,#444)',3:'linear-gradient(135deg,#666,#444)',4:'linear-gradient(135deg,#4a9eff,#2176e0)',5:'linear-gradient(135deg,#c77dff,#a055e8)',6:'linear-gradient(135deg,#ff9f43,#ee5a24)',7:'linear-gradient(135deg,#e8365d,#c01040)',8:'linear-gradient(135deg,#ffd700,#ffb300)',9:'linear-gradient(135deg,#ff4d6d,#c77dff,#4a9eff)'};
+  const ring = rings[u.level] || rings[1];
+
+  const punHtml = punishments.length ? punishments.slice(0,10).map(p => `
+    <div class="ph-item">
+      <div class="ph-dot ${p.type}"></div>
+      <div class="ph-text">
+        <div class="ph-type">${p.type === 'warning' ? '⚠ Предупреждение' : '✕ Выговор'}</div>
+        <div class="ph-reason">${p.reason||'Причина не указана'}</div>
+        <div class="ph-date">${fmtDate(p.created_at)}</div>
+      </div>
+    </div>`).join('') : '<div style="font-size:13px;color:#1e1e28;padding:12px 0">Нарушений нет</div>';
+
+  const canEdit = canManage(u) && u.id !== ME?.id;
+  const isSelf = ME && (u.id === ME.id || (u.nickname === ME.nickname));
+
+  let adminBtns = '';
+  if (canEdit || (ME && ME.level >= 9)) {
+    adminBtns = `
+      <div class="divider-row">Действия</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="action-btn" onclick="openEditUser('${u.id}')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Редактировать
+        </button>
+        <button class="action-btn" onclick="openPunish('${u.id}','${u.nickname}')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Наказать
+        </button>
+        ${ME && ME.level >= 7 ? `<button class="action-btn danger" onclick="kickUser('${u.id}','${u.nickname}')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          Кик
+        </button>` : ''}
+      </div>`;
+  }
+
+  document.getElementById('profileContent').innerHTML = `
+    <div class="pp-hero">
+      <div class="pp-av-wrap">
+        <div class="pp-avatar">${av}</div>
+        <div class="pp-av-ring" style="background:${ring}"></div>
+      </div>
+      <div class="pp-nick ${nickCls}">${u.nickname||'—'}${inactHtml}</div>
+      <div class="pp-pos">${u.position||'—'} · ${u.real_name||'—'}</div>
+      <div class="pp-pills">
+        ${levelPill(u.level)}
+        ${u.is_inactive ? `<span class="level-pill" style="background:rgba(61,217,235,.12);color:var(--inactive)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Неактив</span>` : ''}
+      </div>
+    </div>
+    <div class="pp-body">
+      <div class="pp-section">
+        <div class="pp-section-title">Информация</div>
+        <div class="pp-row"><div class="pp-key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Постановление</div><div class="pp-val">${fmtDate(u.appointment_date)} <span style="color:#2a2a36;font-size:11px">(${timeAgo(u.appointment_date)})</span></div></div>
+        <div class="pp-row"><div class="pp-key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Повышение</div><div class="pp-val">${fmtDate(u.last_promotion_date)} <span style="color:#2a2a36;font-size:11px">(${timeAgo(u.last_promotion_date)})</span></div></div>
+      </div>
+      <div class="pp-section">
+        <div class="pp-section-title">Нарушения</div>
+        <div class="pp-stats-grid">
+          <div class="pp-stat-card"><div class="pp-stat-num warns">${u.warnings||0}</div><div class="pp-stat-label">Предупреждений</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-num reps">${u.reprimands||0}</div><div class="pp-stat-label">Выговоров</div></div>
+        </div>
+      </div>
+      ${punishments.length ? `<div class="pp-section"><div class="pp-section-title">История наказаний</div><div class="pp-history">${punHtml}</div></div>` : ''}
+      ${(u.vk_url || u.discord) ? `
+      <div class="pp-section">
+        <div class="pp-section-title">Соцсети</div>
+        <div class="pp-socials">
+          ${u.vk_url ? `<a href="${u.vk_url}" target="_blank" class="pp-social vk"><svg viewBox="0 0 24 24"><path d="M21.547 7h-3.29a.743.743 0 0 0-.655.392s-1.312 2.416-1.734 3.23C14.734 12.813 14 12.126 14 11.11V7.603A1.104 1.104 0 0 0 12.896 6.5h-2.474a1.982 1.982 0 0 0-1.75.813s1.255-.204 1.255 1.49c0 .42.022 1.626.04 2.64a.73.73 0 0 1-1.272.503 21.54 21.54 0 0 1-2.498-4.543.693.693 0 0 0-.63-.403h-2.99a.508.508 0 0 0-.48.685C3.005 10.175 6.918 18 11.38 18h1.878a.742.742 0 0 0 .742-.742v-1.135a.73.73 0 0 1 1.23-.53l2.247 2.112a1.09 1.09 0 0 0 .816.355h2.309a1.09 1.09 0 0 0 .972-1.587l-1.956-3.415a.73.73 0 0 1 .098-.846l3.83-4.48A.744.744 0 0 0 21.547 7z"/></svg></a>` : ''}
+          ${u.discord ? `<div class="pp-social ds" title="${u.discord}"><svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></div>` : ''}
+        </div>
+      </div>` : ''}
+      ${adminBtns}
+    </div>`;
+
+  document.getElementById('profileOverlay').classList.add('open');
+}
+
+function closeProfile(e) {
+  if (e.target === document.getElementById('profileOverlay')) {
+    document.getElementById('profileOverlay').classList.remove('open');
+  }
+}
+
+// ══════════════════════════════════════════════
+// MY PROFILE
+// ══════════════════════════════════════════════
+function renderMyProfile() {
+  if (!ME) return;
+  // For dev user, show simplified
+  const u = ME.id === '__dev__' ? ME : (allUsers.find(x => x.id === ME.id) || ME);
+
+  const av = u.avatar ? `<img src="${u.avatar}" alt="">` : avatarLetter(u.nickname);
+  document.getElementById('mpAvatar').innerHTML = u.avatar ? `<img src="${u.avatar}">` : `<span>${avatarLetter(u.nickname)}</span>`;
+  document.getElementById('sbAvatar').innerHTML = u.avatar ? `<img src="${u.avatar}">` : `<span>${avatarLetter(u.nickname)}</span>`;
+  document.getElementById('mpNick').textContent = u.nickname || '—';
+  document.getElementById('mpPos').textContent = u.position || '—';
+  document.getElementById('mpLevelPill').innerHTML = levelPill(u.level);
+  document.getElementById('mpWarns').textContent = u.warnings || 0;
+  document.getElementById('mpReps').textContent = u.reprimands || 0;
+  document.getElementById('mpDates').innerHTML = `Постановление: ${fmtDate(u.appointment_date)}<br>Последнее повышение: ${fmtDate(u.last_promotion_date)}`;
+  document.getElementById('mpDiscord').value = u.discord || '';
+  document.getElementById('mpVK').value = u.vk_url || '';
+
+  // Punishment history
+  const punishments = allPunishments.filter(p => p.user_id === ME.id);
+  const punEl = document.getElementById('myPunishList');
+  punEl.innerHTML = punishments.length ? punishments.map(p => `
+    <div class="ph-item">
+      <div class="ph-dot ${p.type}"></div>
+      <div class="ph-text">
+        <div class="ph-type">${p.type==='warning'?'⚠ Предупреждение':'✕ Выговор'}</div>
+        <div class="ph-reason">${p.reason||'—'}</div>
+        <div class="ph-date">${fmtDate(p.created_at)}</div>
+      </div>
+    </div>`).join('') : '<div style="font-size:13px;color:#1e1e28;padding:8px 0">Нарушений нет</div>';
+}
+
+async function saveSocials() {
+  if (!ME || ME.id === '__dev__') { toast('Не применимо для dev', 'err'); return; }
+  const discord = document.getElementById('mpDiscord').value.trim();
+  const vk_url  = document.getElementById('mpVK').value.trim();
+  try {
+    await sb('users?id=eq.'+ME.id, 'PATCH', { discord: discord||null, vk_url: vk_url||null });
+    const u = allUsers.find(x => x.id === ME.id);
+    if (u) { u.discord = discord; u.vk_url = vk_url; }
+    toast('Соцсети обновлены', 'ok');
+  } catch(e) { toast('Ошибка: '+e.message, 'err'); }
+}
+
+async function changePassword() {
+  if (!ME || ME.id === '__dev__') { toast('Не применимо для dev', 'err'); return; }
+  const oldPass = document.getElementById('mpOldPass').value;
+  const newPass = document.getElementById('mpNewPass').value;
+  const conf    = document.getElementById('mpConfPass').value;
+  if (!oldPass || !newPass) return toast('Заполни все поля', 'err');
+  if (newPass.length < 6) return toast('Пароль минимум 6 символов', 'err');
+  if (newPass !== conf) return toast('Пароли не совпадают', 'err');
+  const u = allUsers.find(x => x.id === ME.id);
+  if (u && u.password !== oldPass) return toast('Неверный текущий пароль', 'err');
+  try {
+    await sb('users?id=eq.'+ME.id, 'PATCH', { password: newPass });
+    if (u) u.password = newPass;
+    document.getElementById('mpOldPass').value = '';
+    document.getElementById('mpNewPass').value = '';
+    document.getElementById('mpConfPass').value = '';
+    toast('Пароль изменён', 'ok');
+  } catch(e) { toast('Ошибка: '+e.message, 'err'); }
+}
+
+async function uploadAvatar(e) {
+  const file = e.target.files[0];
+  if (!file || ME.id === '__dev__') return;
+  if (file.size > 2*1024*1024) { toast('Файл слишком большой (макс. 2MB)', 'err'); return; }
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const base64 = ev.target.result;
+    try {
+      await sb('users?id=eq.'+ME.id, 'PATCH', { avatar: base64 });
+      const u = allUsers.find(x => x.id === ME.id);
+      if (u) u.avatar = base64;
+      document.getElementById('mpAvatar').innerHTML = `<img src="${base64}">`;
+      document.getElementById('sbAvatar').innerHTML = `<img src="${base64}">`;
+      toast('Аватарка обновлена', 'ok');
+    } catch(err) { toast('Ошибка загрузки: '+err.message, 'err'); }
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+// ══════════════════════════════════════════════
+// INACTIVES
+// ══════════════════════════════════════════════
+function updateInactiveBadge() {
+  const count = allUsers.filter(u => u.is_inactive).length;
+  const badge = document.getElementById('inactiveBadge');
+  badge.textContent = count;
+  badge.style.display = count > 0 ? '' : 'none';
+}
+
+async function loadInactives() {
+  const grid = document.getElementById('inactiveGrid');
+  grid.innerHTML = '<div class="empty"><span class="loader"></span></div>';
+  try {
+    const inactiveUsers = allUsers.filter(u => u.is_inactive);
+    if (!inactiveUsers.length) {
+      grid.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Нет неактивных сотрудников</div>';
+      return;
+    }
+
+    // Admin view: show requests
+    const canViewReqs = ME && ME.level >= 4;
+    let reqsHtml = '';
+    if (canViewReqs && inactiveRequests.length) {
+      const pending = inactiveRequests.filter(r => r.status === 'pending');
+      if (pending.length) {
+        reqsHtml = `<div style="margin-bottom:24px"><h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;margin-bottom:14px;color:#ffa500">Ожидают одобрения (${pending.length})</h4><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px">${pending.map(r => {
+          const ru = allUsers.find(u => u.id === r.user_id);
+          return `<div class="inactive-card">
+            <div class="ic-head"><div><div class="ic-nick">${ru?.nickname||'—'}</div><div class="ic-pos">${ru?.position||'—'}</div></div></div>
+            <div class="ic-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 0 2 2z"/></svg>${r.reason||'—'}</div>
+            <div class="ic-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${fmtDate(r.start_date)} — ${fmtDate(r.end_date)}</div>
+            <div class="ic-actions">
+              <button class="action-btn ok" onclick="approveInactive('${r.id}','${r.user_id}')">Одобрить</button>
+              <button class="action-btn danger" onclick="rejectInactive('${r.id}')">Отклонить</button>
+            </div>
+          </div>`;
+        }).join('')}</div></div>`;
+      }
+    }
+
+    grid.innerHTML = reqsHtml + `<h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;margin-bottom:14px">Текущие неактивы</h4><div class="inactive-grid">${inactiveUsers.map(u => {
+      const av = u.avatar ? `<img src="${u.avatar}">` : `<span>${avatarLetter(u.nickname)}</span>`;
+      return `<div class="inactive-card">
+        <div class="ic-head">
+          <div class="ac-avatar" style="width:40px;height:40px;font-size:16px">${av}</div>
+          <div><div class="ic-nick">${u.nickname||'—'}</div><div class="ic-pos">${u.position||'—'}</div></div>
+        </div>
+        ${levelPill(u.level)}
+      </div>`;
+    }).join('')}</div>`;
+  } catch(e) { grid.innerHTML = '<div class="empty">Ошибка загрузки</div>'; }
+}
+
+function openInactiveReq() { document.getElementById('inactiveModal').classList.add('open'); }
+
+async function submitInactiveReq() {
+  if (!ME || ME.id === '__dev__') { toast('Недоступно для dev', 'err'); return; }
+  const reason = document.getElementById('inactReason').value.trim();
+  const start  = document.getElementById('inactStart').value;
+  const end    = document.getElementById('inactEnd').value;
+  if (!reason) return toast('Укажи причину', 'err');
+  if (!start || !end) return toast('Укажи даты', 'err');
+  if (new Date(end) <= new Date(start)) return toast('Дата конца должна быть позже начала', 'err');
+  try {
+    const r = await sb('inactive_requests', 'POST', { user_id: ME.id, reason, start_date: start, end_date: end, status: 'pending' });
+    if (r[0]) inactiveRequests.unshift(r[0]);
+    document.getElementById('inactiveModal').classList.remove('open');
+    document.getElementById('inactReason').value = '';
+    toast('Заявка отправлена', 'ok');
+  } catch(e) { toast('Ошибка: '+e.message, 'err'); }
+}
+
+async function approveInactive(reqId, userId) {
+  try {
+    await sb('inactive_requests?id=eq.'+reqId, 'PATCH', { status: 'approved', approved_by: ME.id });
+    await sb('users?id=eq.'+userId, 'PATCH', { is_inactive: true });
+    const u = allUsers.find(x => x.id === userId);
+    if (u) u.is_inactive = true;
+    const r = inactiveRequests.find(x => x.id === reqId);
+    if (r) r.status = 'approved';
+    toast('Неактив одобрен', 'ok');
+    loadInactives(); updateInactiveBadge();
+  } catch(e) { toast('Ошибка: '+e.message, 'err'); }
+}
+
+async function rejectInactive(reqId) {
+  try {
+    await sb('inactive_requests?id=eq.'+reqId, 'PATCH', { status: 'rejected' });
+    const r = inactiveRequests.find(x => x.id === reqId);
+    if (r) r.status = 'rejected';
+    toast('Заявка отклонена', 'err');
+    loadInactives();
+  } catch(e) { toast('Ошибка: '+e.message, 'err'); }
+}
+
+// ══════════════════════════════════════════════
+// PUNISHMENT
+// ══════════════════════════════════════════════
+function openPunish(userId, nick) {
+  punishTargetId = userId;
+  document.getElementById('punishTitle').textContent = 'Наказание: '+nick;
+  document.getElementById('punishSub').textContent = 'Выберите тип и укажите причину';
+  document.getElementById('punishReason').value = '';
+  document.getElementById('punishModal').classList.add('open');
+}
+
+async function issuePunishment() {
+  const type   = document.getElementById('punishType').value;
+  const reason = document.getElementById('punishReason').value.trim();
+  if (!reason) return toast('Укажи причину', 'err');
+  if (!punishTargetId) return;
+  try {
+    const r = await sb('punishments', 'POST', { user_id: punishTargetId, type, reason, issued_by: ME.id || ME.nickname });
+    if (r[0]) allPunishments.unshift(r[0]);
+    const u = allUsers.find(x => x.id === punishTargetId);
+    if (u) { if (type==='warning') u.warnings=(u.warnings||0)+1; else u.reprimands=(u.reprimands||0)+1; }
+    await sb('users?id=eq.'+punishTargetId, 'PATCH', type==='warning' ? {warnings:(u?.warnings||0)} : {reprimands:(u?.reprimands||0)});
+    document.getElementById('punishModal').classList.remove('open');
+    toast('Наказание выдано', 'ok');
+    renderStaff();
+  } catch(e) { toast('Ошибка: '+e.message, 'err'); }
+}
+
+// ══════════════════════════════════════════════
+// ADMIN EDIT USER
+// ══════════════════════════════════════════════
+function openEditUser(id) {
+  const u = allUsers.find(x => x.id === id);
+  if (!u) return;
+  document.getElementById('editUserId').value = id;
+  document.getElementById('editUserSub').textContent = 'Редактирование: ' + u.nickname;
+  document.getElementById('euNick').value = u.nickname || '';
+  document.getElementById('euName').value = u.real_name || '';
+  document.getElementById('euPos').value = u.position || '';
+  document.getElementById('euLevel').value = u.level || 1;
+  document.getElementById('euAppoint').value = u.appointment_date ? u.appointment_date.split('T')[0] : '';
+  document.getElementById('euPromo').value = u.last_promotion_date ? u.last_promotion_date.split('T')[0] : '';
+  document.getElementById('euDiscord').value = u.discord || '';
+  document.getElementById('euVk').value = u.vk_url || '';
+  document.getElementById('euInactive').value = u.is_inactive ? 'true' : 'false';
+  // Only dev can assign lvl 9
+  document.getElementById('euLv9opt').style.display = (ME && ME.level === 9) ? '' : 'none';
+  // Limit level options by own rank
+  const euLevel = document.getElementById('euLevel');
+  Array.from(euLevel.options).forEach(opt => {
+    const v = parseInt(opt.value);
+    opt.disabled = ME && ME.level < 9 && v >= ME.level;
+  });
+  document.getElementById('editUserModal').classList.add('open');
+}
+
+async function saveEditUser() {
+  const id = document.getElementById('editUserId').value;
+  const u = allUsers.find(x => x.id === id);
+  if (!u) return;
+  const level = parseInt(document.getElementById('euLevel').value);
+  if (ME && ME.level < 9 && level >= ME.level) return toast('Нельзя назначить уровень выше своего', 'err');
+  try {
+    const patch = {
+      nickname: document.getElementById('euNick').value.trim(),
+      real_name: document.getElementById('euName').value.trim(),
+      position: document.getElementById('euPos').value.trim(),
+      level,
+      appointment_date: document.getElementById('euAppoint').value || null,
+      last_promotion_date: document.getElementById('euPromo').value || null,
+      discord: document.getElementById('euDiscord').value.trim() || null,
+      vk_url: document.getElementById('euVk').value.trim() || null,
+      is_inactive: document.getElementById('euInactive').value === 'true'
+    };
+    await sb('users?id=eq.'+id, 'PATCH', patch);
+    Object.assign(u, patch);
+    document.getElementById('editUserModal').classList.remove('open');
+    renderStaff(); updateInactiveBadge();
+    toast('Данные сохранены', 'ok');
+  } catch(e) { toast('Ошибка: '+e.message, 'err'); }
+}
+
+async function kickUser(id, nick) {
+  if (!confirm(`Удалить ${nick}? Это действие необратимо.`)) return;
+  try {
+    await sb('users?id=eq.'+id, 'DELETE');
+    await sb('punishments?user_id=eq.'+id, 'DELETE');
+    await sb('inactive_requests?user_id=eq.'+id, 'DELETE');
+    allUsers = allUsers.filter(x => x.id !== id);
+    document.getElementById('profileOverlay').classList.remove('open');
+    renderStaff(); updateInactiveBadge();
+    toast('Пользователь удалён', 'ok');
+  } catch(e) { toast('Ошибка: '+e.message, 'err'); }
+}
+
+// ══════════════════════════════════════════════
+// ADMIN MANAGE PAGE
+// ══════════════════════════════════════════════
+function renderAdminManage() {
+  const grid = document.getElementById('adminManageGrid');
+  const manageable = allUsers.filter(u => canManage(u));
+  if (!manageable.length) { grid.innerHTML = '<div class="empty">Нет сотрудников в вашем управлении</div>'; return; }
+  grid.innerHTML = manageable.map(u => {
+    const av = u.avatar ? `<img src="${u.avatar}">` : `<span>${avatarLetter(u.nickname)}</span>`;
+    return `<div class="admin-card ${CARD_CLS[u.level]||'lv1'}">
+      <div class="ac-top">
+        <div class="ac-avatar">${av}</div>
+        <div class="ac-info"><div class="ac-nick ${u.is_inactive?'inactive-nick':''}">${u.nickname||'—'}</div><div class="ac-pos">${u.position||'—'}</div></div>
+      </div>
+      <div style="margin-bottom:12px">${levelPill(u.level)}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="action-btn" onclick="openEditUser('${u.id}')">Изменить</button>
+        <button class="action-btn" onclick="openPunish('${u.id}','${u.nickname}')">Наказать</button>
+        ${ME && ME.level >= 7 ? `<button class="action-btn danger" onclick="kickUser('${u.id}','${u.nickname}')">Кик</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+(async function init() {
+  ME = loadSession();
+  if (!ME) return;
+
+  // Sidebar
+  document.getElementById('sbNick').textContent = ME.nickname;
+  document.getElementById('sbLevel').textContent = LEVEL_NAMES[ME.level] || '—';
+  document.getElementById('sbAvatarLetter').textContent = avatarLetter(ME.nickname);
+
+  // Show admin nav if level >= 4
+  if (ME.level >= 4 || ME.id === '__dev__') {
+    document.getElementById('adminNavBtn').style.display = '';
+    document.getElementById('adminNavLabel').style.display = '';
+    document.getElementById('inactiveNavBtn').style.display = '';
+  }
+
+  await loadAll();
+})();
+</script>
+</body>
+</html>
