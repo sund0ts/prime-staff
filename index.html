@@ -7,27 +7,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#070709; --surface:#0d0d12; --border:#16161e;
+    --bg:#0e1117; --surface:#131720; --border:#1d2130;
     --accent1:#e8365d; --accent2:#4a9eff; --accent3:#c77dff;
     --gradient:linear-gradient(135deg,#ff4d6d,#c77dff,#4a9eff);
-    --text:#f0f0f4; --muted:#3a3a4a; --card:#0f0f15;
+    --text:#eef0f6; --muted:#3a3a4a; --card:#111520;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{height:100%;overflow:hidden;}
   body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;position:relative;}
-
-  /* Animated BG */
-  .bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;}
-  .orb{position:absolute;border-radius:50%;filter:blur(80px);animation:orb-float 8s ease-in-out infinite;}
-  .orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(232,54,93,0.08),transparent 70%);top:-100px;left:-100px;animation-delay:0s;}
-  .orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(74,158,255,0.07),transparent 70%);bottom:-80px;right:-80px;animation-delay:3s;}
-  .orb3{width:300px;height:300px;background:radial-gradient(circle,rgba(199,125,255,0.06),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:5s;}
-  @keyframes orb-float{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(20px,-20px) scale(1.05);}}
-  .orb1{animation-name:orb1-anim;}
-  @keyframes orb1-anim{0%,100%{transform:translate(0,0);}50%{transform:translate(40px,30px);}}
-
-  /* Noise */
-  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1;}
+  body::before{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(rgba(74,158,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(74,158,255,0.04) 1px,transparent 1px);
+    background-size:52px 52px;
+    mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 20%,transparent 100%);
+    -webkit-mask-image:radial-gradient(ellipse 90% 90% at 50% 50%,black 20%,transparent 100%);
+  }
+  body::after{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 20%,rgba(232,54,93,0.06) 0%,transparent 65%),
+      radial-gradient(ellipse 55% 55% at 88% 85%,rgba(74,158,255,0.07) 0%,transparent 65%),
+      radial-gradient(ellipse 40% 40% at 50% 50%,rgba(199,125,255,0.04) 0%,transparent 70%);
+  }
 
   /* CARD */
   .login-wrap{position:relative;z-index:2;width:100%;max-width:420px;padding:20px;}
@@ -77,12 +78,6 @@
 </style>
 </head>
 <body>
-<div class="bg-orbs">
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
-</div>
-
 <div class="login-wrap">
   <div class="login-card">
     <div class="logo-area">
